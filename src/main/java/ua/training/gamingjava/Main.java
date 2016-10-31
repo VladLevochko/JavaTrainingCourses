@@ -7,9 +7,10 @@ import java.io.PrintWriter;
  */
 public class Main {
     public static void main(String[] args) {
-        NumberGuessingGame game = new NumberGuessingGame();
+        Model game = new Model();
         View view = new View(new PrintWriter(System.out));
         Controller controller = new Controller(game, view);
+
         controller.startGame();
     }
 }

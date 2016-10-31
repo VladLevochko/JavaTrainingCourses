@@ -7,62 +7,77 @@ import java.util.Scanner;
  */
 public class Controller {
 
+    /**
+     * constant range limits
+     */
     private final int MIN_VALUE = 0;
     private final int MAX_VALUE = 100;
 
-    private NumberGuessingGame game;
+    private Model model;
     private View view;
     private Scanner scanner;
 
-    public Controller(NumberGuessingGame game, View view) {
-        this.game = game;
+    public Controller(Model model, View view) {
+        this.model = model;
         this.view = view;
         scanner = new Scanner(System.in);
     }
 
+    /**
+     * method initialize model and set limits of range
+     * in loop read user's value, pass it to guessNumber() and check status code
+     */
     public void startGame() {
-        game.initializeGame(MIN_VALUE, MAX_VALUE);
+        model.initializeGame(MIN_VALUE, MAX_VALUE);
 
         view.printMessage(view.HELLO);
-        boolean endGame = false;
 
-        while (!endGame) {
-            view.printMessageWithRange(view.GUESS_NUMBER_IN_RANGE, game.getRange());
-            String userInput = readUserInput();
-            if (checkUserInput(userInput)) {
-                int usersNumber = Integer.parseInt(userInput);
-                switch (game.makeGuess(usersNumber)) {
-                    case -1:
-                        view.printMessage(view.NUMBER_IS_LOWER);
-                        break;
-                    case 0:
-                        view.printMessage(view.YOU_WIN);
-                        view.printLastGuesses(game.getGuesses());
-                        endGame = true;
-                        break;
-                    case 1:
-                        view.printMessage(view.NUMBER_IS_GREATER);
-                        break;
-                    case 2:
-                        view.printMessage(view.NUMBER_OUT_OF_RANGE);
-                        break;
-                }
-            } else {
+        boolean userWin = false;
+        while (!userWin) {
+            try {
+                view.printAttempts(model.getAttempts());
+                view.printMessageWithRange(view.GUESS_NUMBER_IN_RANGE, model.getRange());
+
+                String userInput = readUserInput();
+                StatusCode statusCode = model.guessNumber(userInput);
+                userWin = processStatusCode(statusCode);
+            } catch (NumberFormatException e) {
                 view.printMessage(view.INCORRECT_INPUT);
+            } catch (OutOfRangeException e) {
+                view.printMessage(view.NUMBER_OUT_OF_RANGE);
             }
         }
 
     }
 
-    public boolean checkUserInput(String userInput) {
-        try {
-            Integer.parseInt(userInput);
-            return true;
-        } catch(NumberFormatException e) {
-            return false;
+    /**
+     * method checks status code and prints appropriate message
+     * if user win (status code equal NUMBERS_ARE_EQUALS) returns true, otherwise - false
+     * @param statusCode
+     * @return
+     */
+    public boolean processStatusCode(StatusCode statusCode) {
+        boolean userWin = false;
+        switch (statusCode) {
+            case NUMBERS_ARE_EQUAL:
+                userWin = true;
+                view.printMessage(view.YOU_WIN);
+                break;
+            case NUMBER_IS_GREATER:
+                view.printMessage(view.NUMBER_IS_GREATER);
+                break;
+            case NUMBER_IS_LOWER:
+                view.printMessage(view.NUMBER_IS_LOWER);
+                break;
         }
+
+        return userWin;
     }
 
+    /**
+     * read string using scanner
+     * @return read string
+     */
     public String readUserInput() {
         return scanner.nextLine();
     }
