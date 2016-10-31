@@ -54,7 +54,7 @@ public class Controller {
      * method checks status code and prints appropriate message
      * if user win (status code equal NUMBERS_ARE_EQUALS) returns true, otherwise - false
      * @param statusCode
-     * @return
+     * @return true if user guess number, otherwise false
      */
     public boolean processStatusCode(StatusCode statusCode) {
         boolean userWin = false;

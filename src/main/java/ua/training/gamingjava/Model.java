@@ -32,7 +32,7 @@ public class Model {
     }
 
     /**
-     * method propose a random number from range
+     * method set a random number from range to proposedNumber
      */
     public void proposeNumber() {
         Random random = new Random();
@@ -50,7 +50,7 @@ public class Model {
     /**
      * in method user's number compares to proposed number and returns status code of comparison
      * or exception if user enters not a number or this number is out of range
-     * @param userInput
+     * @param userInput string inputted by user
      * @return int status code of comparison
      * @throws NumberFormatException
      * @throws OutOfRangeException

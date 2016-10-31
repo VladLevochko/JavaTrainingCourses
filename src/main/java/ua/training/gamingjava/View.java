@@ -29,7 +29,7 @@ public class View {
 
     /**
      * method print passed message
-     * @param message
+     * @param message string to print
      */
     public void printMessage(String message) {
         writer.print(message);
@@ -38,8 +38,8 @@ public class View {
 
     /**
      * method print passed message and range
-     * @param message
-     * @param range
+     * @param message string to print
+     * @param range current range
      */
     public void printMessageWithRange(String message, int[] range) {
         writer.print(message);
@@ -49,7 +49,7 @@ public class View {
 
     /**
      * method print list of attempts of user
-     * @param attempts
+     * @param attempts list of user's attempts
      */
     public void printAttempts(List<String> attempts) {
         //if there are no attempts don't print anything
