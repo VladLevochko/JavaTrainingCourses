@@ -7,12 +7,6 @@ import java.util.Scanner;
  */
 public class Controller {
 
-    /**
-     * constant range limits
-     */
-    private final int MIN_VALUE = 0;
-    private final int MAX_VALUE = 100;
-
     private Model model;
     private View view;
     private Scanner scanner;
@@ -20,65 +14,97 @@ public class Controller {
     public Controller(Model model, View view) {
         this.model = model;
         this.view = view;
-        scanner = new Scanner(System.in);
     }
 
     /**
-     * method initialize model and set limits of range
-     * in loop read user's value, pass it to guessNumber() and check status code
+     * Creates new instance of Scanner to read from standard input.
+     * Initialize model with values. Sets barriers and call method setSecretNumber
+     * to generate and set secret number.
+     * Prints greeting.
+     * Read values from user and process them.
+     * If user win, prints appropriate message.
      */
-    public void startGame() {
-        model.initializeGame(MIN_VALUE, MAX_VALUE);
+    public void processUser() {
+        scanner = new Scanner(System.in);
+
+        model.setPrimaryBarrier(GlobalConstants.MIN_VALUE, GlobalConstants.MAX_VALUE);
+        model.setSecretNumber();
 
         view.printMessage(view.HELLO);
 
-        boolean userWin = false;
-        while (!userWin) {
-            try {
-                view.printAttempts(model.getAttempts());
-                view.printMessageWithRange(view.GUESS_NUMBER_IN_RANGE, model.getRange());
+        int inputValue;
+        do {
+            inputValue = inputValueWithScanner();
+        } while (!processValue(inputValue));
 
-                String userInput = readUserInput();
-                StatusCode statusCode = model.guessNumber(userInput);
-                userWin = processStatusCode(statusCode);
-            } catch (NumberFormatException e) {
-                view.printMessage(view.INCORRECT_INPUT);
-            } catch (OutOfRangeException e) {
-                view.printMessage(view.NUMBER_OUT_OF_RANGE);
-            }
-        }
+        view.printMessage(view.YOU_WIN);
 
     }
 
     /**
-     * method checks status code and prints appropriate message
-     * if user win (status code equal NUMBERS_ARE_EQUALS) returns true, otherwise - false
-     * @param statusCode
-     * @return true if user guess number, otherwise false
+     *  Check inputValue does it in allowed range and equals to secret number.
+     *  If inputValue not in range or not equal to secret number returns false.
+     *  Otherwise returns true.
+     *
+     * @param inputValue value to check
+     * @return true if value in range and equal to secret number
      */
-    public boolean processStatusCode(StatusCode statusCode) {
-        boolean userWin = false;
-        switch (statusCode) {
-            case NUMBERS_ARE_EQUAL:
-                userWin = true;
-                view.printMessage(view.YOU_WIN);
-                break;
-            case NUMBER_IS_GREATER:
-                view.printMessage(view.NUMBER_IS_GREATER);
-                break;
-            case NUMBER_IS_LOWER:
-                view.printMessage(view.NUMBER_IS_LOWER);
-                break;
-        }
-
-        return userWin;
+    public boolean processValue(int inputValue) {
+        return checkValueInRange(inputValue) && model.checkValue(inputValue);
     }
 
     /**
-     * read string using scanner
-     * @return read string
+     * Checks if inputValue is in allowed range.
+     * If inputValue out of range prints appropriate message ant false returns.
+     * If inputValue in range, it checks for more or less than secret number
+     * calling checkMoreOrLess method and returns true.
+     *
+     * @param inputValue value to check
+     * @return true if inputValue in allowed range and false otherwise
      */
-    public String readUserInput() {
-        return scanner.nextLine();
+    public boolean checkValueInRange(int inputValue) {
+        if (inputValue <= model.getMinBarrier()
+                || inputValue >= model.getMaxBarrier()) {
+            view.printMessage(view.NUMBER_OUT_OF_RANGE);
+
+            return false;
+        }
+        checkMoreOrLess(inputValue);
+
+        return true;
+    }
+
+    /**
+     * Checks does inputValue greater of lower than secret value
+     * and prints appropriate value
+     *
+     * @param inputValue value to check with secret number
+     */
+    private void checkMoreOrLess(int inputValue) {
+        if (model.checkValueIsGreater(inputValue)) {
+            view.printMessage(view.NUMBER_IS_GREATER);
+        } else if (model.checkValueIsLower(inputValue)) {
+            view.printMessage(view.NUMBER_IS_LOWER);
+        }
+    }
+
+    /**
+     * Prints information about allowed range.
+     * Ignores all non integer values entered by user.
+     * Return integer value entered by user.
+     *
+     * @return entered integer value
+     */
+    public int inputValueWithScanner() {
+        view.printAttempts(model.getAttempts());
+        view.printMessage(view.GUESS_NUMBER_IN_RANGE);
+        view.printMessage(Integer.toString(model.getMinBarrier()));
+        view.printMessage(Integer.toString(model.getMaxBarrier()));
+
+        while (!scanner.hasNextInt()) {
+            scanner.next();
+        }
+
+        return scanner.nextInt();
     }
 }

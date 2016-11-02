@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.*;
 
 /**
@@ -11,61 +13,69 @@ import static org.junit.Assert.*;
  */
 public class TestModel {
 
-    private static final int PROPOSED_NUMBER = 10;
-    private static final String LOWER_GUESSED_NUMBER = "5";
-    private static final String GREATER_GUESSED_NUMBER = "15";
-    private static final String EQUAL_GUESSED_NUMBER = "10";
-    private static final String OUT_OF_RANGE_NUMBER = "200";
-    private static final String INCORRECT_NUMBER = "100d";
+    private static final int OUT_OF_RANGE_NUMBER = 200;
     private static final int MIN_NUMBER = 0;
     private static final int MAX_NUMBER = 100;
+    private static final int NUMBER_OF_ITERATIONS = 1000;
 
-    private static Model game;
+    private static Model model;
 
     @BeforeClass
     public static void initializeTester() {
-        game = new Model();
+        model = new Model();
     }
 
     @Before
     public void initializeGame() {
-        game.initializeGame(MIN_NUMBER, MAX_NUMBER);
-        game.setProposedNumber(PROPOSED_NUMBER);
+        model.setPrimaryBarrier(MIN_NUMBER, MAX_NUMBER);
+        model.setSecretNumber();
     }
 
     @Test
-    public void testGuessNumberWithLowerNumber() throws OutOfRangeException {
-        StatusCode actualValue = game.guessNumber(LOWER_GUESSED_NUMBER);
-        StatusCode expectedValue = StatusCode.NUMBER_IS_LOWER;
+    public void testSetSecretNumber() {
+        boolean noGreaterOrLowerValues = true;
+        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
+            model.setSecretNumber();
+            int secretNumber = model.getSecretNumber();
+            if (secretNumber <= model.getMinBarrier() || secretNumber >= model.getMaxBarrier()) {
+                noGreaterOrLowerValues = false;
+                break;
+            }
+        }
 
-        assertEquals(expectedValue, actualValue);
+        assertTrue(noGreaterOrLowerValues);
     }
 
     @Test
-    public void testGuessNumberWithGreaterNumber() throws OutOfRangeException {
-        StatusCode actualValue = game.guessNumber(GREATER_GUESSED_NUMBER);
-        StatusCode expectedValue = StatusCode.NUMBER_IS_GREATER;
-
-        assertEquals(expectedValue, actualValue);
+    public void testCompareValueWithOutOfRangeValue() {
+        assertFalse(model.checkValue(OUT_OF_RANGE_NUMBER));
     }
 
     @Test
-    public void testGuessNumberWithEqualNumber() throws OutOfRangeException {
-        StatusCode actualNumber = game.guessNumber(EQUAL_GUESSED_NUMBER);
-        StatusCode expectedNumber = StatusCode.NUMBERS_ARE_EQUAL;
-
-        assertEquals(expectedNumber, actualNumber);
+    public void testCompareValueWithLoverValue() {
+        int secretNumber = model.getSecretNumber();
+        //generate pseudo random number in range from minBarrier (exclusive)
+        //to secretNumber (exclusive)
+        int lowerValue = (int) (model.getMinBarrier() + 1
+                + Math.random() * (secretNumber - model.getMinBarrier() - 1));
+        assertFalse(model.checkValue(lowerValue));
     }
 
-    @Test(expected = OutOfRangeException.class)
-    public void testGuessNumberWithOutOfRangeNumber() throws OutOfRangeException {
-        game.guessNumber(OUT_OF_RANGE_NUMBER);
+    @Test
+    public void testCompareValueWithGreaterValue() {
+        int secretNumber = model.getSecretNumber();
+        //generate pseudo random number in range from secretNumber (exclusive)
+        //to maxBarrier (exclusive)
+        int greaterValue = (int) (secretNumber + 1
+                + Math.random() * (model.getMaxBarrier() - secretNumber - 1));
+        assertFalse(model.checkValue(greaterValue));
     }
 
-    @Test(expected = NumberFormatException.class)
-    public void testGuessNumberWithIncorrectNumber()
-            throws NumberFormatException, OutOfRangeException {
-        game.guessNumber(INCORRECT_NUMBER);
+    @Test
+    public void testCompareValueWithEqualValue() {
+        int secretNumber = model.getSecretNumber();
+        assertTrue(model.checkValue(secretNumber));
     }
+
 
 }

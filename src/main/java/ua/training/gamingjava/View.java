@@ -51,7 +51,7 @@ public class View {
      * method print list of attempts of user
      * @param attempts list of user's attempts
      */
-    public void printAttempts(List<String> attempts) {
+    public void printAttempts(List<Integer> attempts) {
         //if there are no attempts don't print anything
         if (attempts.size() == 0) {
             return;

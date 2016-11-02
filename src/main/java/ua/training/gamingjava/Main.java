@@ -11,6 +11,6 @@ public class Main {
         View view = new View(new PrintWriter(System.out));
         Controller controller = new Controller(game, view);
 
-        controller.startGame();
+        controller.processUser();
     }
 }
