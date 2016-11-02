@@ -27,18 +27,38 @@ public class Controller {
     public void processUser() {
         scanner = new Scanner(System.in);
 
-        model.setPrimaryBarrier(GlobalConstants.MIN_VALUE, GlobalConstants.MAX_VALUE);
-        model.setSecretNumber();
-
         view.printMessage(view.HELLO);
+
+        inputBarrier();
+
+        model.setSecretNumber();
 
         int inputValue;
         do {
-            inputValue = inputValueWithScanner();
+            inputValue = inputNumber();
         } while (!processValue(inputValue));
 
         view.printMessage(view.YOU_WIN);
+    }
 
+    /**
+     * Read values of range limits. If difference between maxBarrier and
+     * minBarrier lower or equal 1, prints error message and ask user to
+     * write limits again.
+     */
+    private void inputBarrier() {
+        view.printMessage(view.INPUT_RANGE_LIMITS);
+        int minBarrier = inputValueWithScanner();
+        int maxBarrier = inputValueWithScanner();
+
+        while (maxBarrier - minBarrier <= 1) {
+            view.printMessage(view.INCORRECT_RANGE_LIMITS);
+            view.printMessage(view.INPUT_RANGE_LIMITS);
+            minBarrier = inputValueWithScanner();
+            maxBarrier = inputValueWithScanner();
+        }
+
+        model.setPrimaryBarrier(minBarrier, maxBarrier);
     }
 
     /**
@@ -88,6 +108,14 @@ public class Controller {
         }
     }
 
+    public int inputNumber() {
+        view.printAttempts(model.getAttempts());
+        view.printMessage(view.GUESS_NUMBER_IN_RANGE);
+        view.printRange(model.getMinBarrier(), model.getMaxBarrier());
+
+        return inputValueWithScanner();
+    }
+
     /**
      * Prints information about allowed range.
      * Ignores all non integer values entered by user.
@@ -96,11 +124,6 @@ public class Controller {
      * @return entered integer value
      */
     public int inputValueWithScanner() {
-        view.printAttempts(model.getAttempts());
-        view.printMessage(view.GUESS_NUMBER_IN_RANGE);
-        view.printMessage(Integer.toString(model.getMinBarrier()));
-        view.printMessage(Integer.toString(model.getMaxBarrier()));
-
         while (!scanner.hasNextInt()) {
             scanner.next();
         }

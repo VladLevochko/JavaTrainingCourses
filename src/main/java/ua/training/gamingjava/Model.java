@@ -27,11 +27,13 @@ public class Model {
 
 
     /**
-     * method set primary low and high limits of range,
+     * method set primary low and high limits of range
+     *
      * @param minBarrier integer value, low limit
      * @param maxBarrier integer value, high limit
      */
     public void setPrimaryBarrier(int minBarrier, int maxBarrier) {
+
         this.minBarrier = minBarrier;
         this.maxBarrier = maxBarrier;
     }
