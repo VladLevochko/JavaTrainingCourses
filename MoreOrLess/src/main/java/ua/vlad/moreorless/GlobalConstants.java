@@ -1,4 +1,4 @@
-package ua.training.gamingjava;
+package ua.vlad.moreorless;
 
 /**
  * Created by vlad on 02.11.16.

@@ -1,4 +1,4 @@
-package ua.training.gamingjava;
+package ua.vlad.moreorless;
 
 import java.util.ArrayList;
 import java.util.List;

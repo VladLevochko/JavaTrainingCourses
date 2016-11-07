@@ -1,10 +1,9 @@
-package ua.training.gamingjava;
+package ua.vlad.moreorless;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.Random;
+import ua.vlad.moreorless.Model;
 
 import static org.junit.Assert.*;
 

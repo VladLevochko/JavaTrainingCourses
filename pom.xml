@@ -2,19 +2,23 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>ua.training.gamingjava</groupId>
-  <artifactId>GamingJava</artifactId>
+  <groupId>ua.training</groupId>
+  <artifactId>TrainingProjects</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+    <modules>
+      <module>MoreOrLess</module>
+      <module>Notebook</module>
+    </modules>
+    <packaging>pom</packaging>
 
-  <name>GamingJava</name>
+  <name>TrainingProjects</name>
   <url>http://maven.apache.org</url>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>ua.training.gamingjava</groupId>
-        <artifactId>GamingJava</artifactId>
+        <groupId>ua.training</groupId>
+        <artifactId>TrainingProjects</artifactId>
         <version>1.0-SNAPSHOT</version>
         <configuration>
           <source>1.8</source>
@@ -25,8 +29,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
     </plugins>
